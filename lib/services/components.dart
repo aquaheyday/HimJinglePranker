@@ -1,28 +1,21 @@
-import 'package:flame/components.dart';
-import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 
-class Ball extends PositionComponent {
-  double radius = 20;
-  Vector2 velocity = Vector2(150, 0); // 초당 150px 오른쪽으로 이동
-
+class YourGame extends FlameGame {
+  // 게임 인스턴스가 생성될때 실행하는 함수, 대부분 여기에 내용을 배치한다.
   @override
-  void render(Canvas canvas) {
-    final paint = Paint()..color = Colors.red;
-    canvas.drawCircle(Offset.zero, radius, paint);
+  Future<void> onLoad() async {
+    super.onLoad();
   }
 
+  // 업데이트 되는 매 프레임마다 실행되는 로직
   @override
-  void update(double dt) {
+  void update(double dt) async {
     super.update(dt);
-    position += velocity * dt;
-
-    // 화면 밖으로 나가면 x축 방향 반전
-    if (position.x + radius > gameRef.size.x || position.x - radius < 0) {
-      velocity.x *= -1;
-    }
   }
 
+  // 인스턴스가 해제될 떄 실행되는 로직
   @override
-  Vector2 get size => Vector2.all(radius * 2);
+  void onRemove() {
+    super.onRemove();
+  }
 }
