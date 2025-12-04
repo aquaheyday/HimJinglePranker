@@ -8,7 +8,7 @@ class Config {
   static final playerInitPosition = Vector2.all(422);
   static const playerSpeed = 2.0;
 
-  static get sceneSize => customizeSize;
+  //static get sceneSize => customizeSize;
 }
 
 class Global {
