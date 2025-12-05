@@ -5,27 +5,68 @@ import 'package:flame/components.dart';
 import 'package:him_jingle_pranker/bird.dart';
 import 'package:him_jingle_pranker/pipe.dart';
 import 'dart:math';
+import 'package:flutter/material.dart';
+
+enum GameState { playing, gameOver }
 
 class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
   late Bird bird;
   int score = 0;
   double pipeSpawnTimer = 0;
+  GameState gameState = GameState.playing;
+  late TextComponent gameOverText;
+  late TextComponent scoreText;
 
   @override
   Future<void> onLoad() async {
     bird = Bird();
     add(bird);
+
+    // Score UI
+    scoreText = TextComponent(
+      text: '0',
+      anchor: Anchor.topCenter,
+      position: Vector2(size.x / 2, 20), // 화면 중앙 상단
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFFFFFFFF),
+        ),
+      ),
+    )
+      ..priority = 200; // 가장 위로
+
+    add(scoreText);
+
+    gameOverText = TextComponent(
+      text: 'GAME OVER\nTap to Restart',
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          fontSize: 40,
+          color: Color(0x00FFFFFF),
+        ),
+      ),
+    )
+      ..position = size / 2
+      ..priority = 100;
+
+    add(gameOverText);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
 
+    if (gameState == GameState.gameOver) return;
+
     pipeSpawnTimer += dt;
     if (pipeSpawnTimer > 2) {
       pipeSpawnTimer = 0;
       spawnPipe();
       score++;
+      scoreText.text = score.toString();
       print("Score: $score");
     }
   }
@@ -58,12 +99,49 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
 
   @override
   void onTapDown(TapDownEvent event) {
-    bird.jump();
+    if (gameState == GameState.gameOver) {
+      restart();
+    } else {
+      bird.jump();
+    }
     print("TAP EVENT"); // 디버그 출력!
   }
 
   void over() {
+    if (gameState == GameState.gameOver) return;
+
+    gameState = GameState.gameOver;
+    gameOverText.textRenderer = TextPaint(
+      style: const TextStyle(
+        fontSize: 40,
+        color: Color(0xFFFFFFFF), // 불투명하게!
+      ),
+    );
     pauseEngine();
     print("GAME OVER Score: $score");
   }
+
+  void restart() {
+    gameState = GameState.playing;
+    score = 0;
+    scoreText.text = '0';
+    pipeSpawnTimer = 0;
+
+    gameOverText.textRenderer = TextPaint(
+      style: const TextStyle(
+        fontSize: 40,
+        color: Color(0x00FFFFFF), // 다시 투명
+      ),
+    );
+
+    // 기존 장애물 모두 제거
+    children.whereType<Pipe>().forEach((pipe) => pipe.removeFromParent());
+
+    // Bird 위치 초기화
+    bird.position = size / 2;
+    bird.speedY = 0;
+
+    resumeEngine();
+  }
+
 }
