@@ -12,7 +12,7 @@ class Bird extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('bird.png');
+    sprite = await Sprite.load('santa.png');
     position = gameRef.size / 2;
     add(CircleHitbox()); // 충돌 범위
   }
