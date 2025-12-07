@@ -1,17 +1,22 @@
+import 'dart:typed_data';
+
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'dart:ui';
 
-class Pipe extends SpriteComponent with CollisionCallbacks, HasGameRef {
+class Pipe extends PositionComponent with CollisionCallbacks {
+  late Sprite sprite;
+  final bool isTop; // 상단/하단 결정
+
   Pipe({
     required Vector2 position,
     required Vector2 size,
+    required this.isTop,
   }) : super(position: position, size: size);
 
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
-    sprite = await Sprite.load('pipe3.png');
+    sprite = await Sprite.load('pipe4.png');
     add(RectangleHitbox());
   }
 
@@ -20,31 +25,35 @@ class Pipe extends SpriteComponent with CollisionCallbacks, HasGameRef {
     if (sprite == null) return;
 
     final img = sprite!.image;
-    final imgW = img.width.toDouble();
-    final imgH = img.height.toDouble();
 
-    double filled = 0; // 현재 채운 높이
+    // 1. 가로 너비에 맞게 이미지를 스케일링할 배율 계산
+    final double scale = width / img.width;
 
-    while (filled < size.y) {
-      double drawH = imgH;
-      if (filled + drawH > size.y) {
-        drawH = size.y - filled; // 마지막 자투리만 자르기
-      }
+    // 2. 이미지를 가로 너비에 맞춘 상태로 반복하기 위한 변환 행렬(Matrix) 생성
+    // 가로와 세로를 scale만큼 키워야 패턴의 크기가 파이프 너비와 일치하게 됩니다.
+    final matrix32 = Float64List.fromList([
+      scale, 0, 0, 0,
+      0, scale, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1,
+    ]);
 
-      canvas.drawImageRect(
+    // 3. Paint 객체에 반복 모드 설정
+    final paint = Paint()
+      ..shader = ImageShader(
         img,
-        Rect.fromLTWH(0, 0, imgW, drawH), // 원본에서 drawH 만큼만 잘라서
-        Rect.fromLTWH(0, filled, size.x, drawH), // y 위치에 계속 붙이기
-        Paint(),
+        TileMode.repeated, // 가로 반복 (필요 시)
+        TileMode.repeated, // 세로 반복 (파이프가 길어지는 핵심)
+        matrix32,
       );
 
-      filled += drawH;
-    }
+    // 4. 원하는 크기만큼 사각형을 그리면 내부가 이미지로 채워집니다.
+    // 가로는 고정된 width, 세로는 컴포넌트의 height만큼 그립니다.
+    canvas.drawRect(Rect.fromLTWH(0, 0, width, height), paint);
   }
 
   @override
   void update(double dt) {
-    super.update(dt);
     position.x -= 200 * dt;
     if (position.x + width < 0) removeFromParent();
   }

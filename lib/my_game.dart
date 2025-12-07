@@ -6,6 +6,7 @@ import 'package:him_jingle_pranker/bird.dart';
 import 'package:him_jingle_pranker/pipe.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flame/parallax.dart';
 
 enum GameState { playing, gameOver }
 
@@ -19,6 +20,16 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
+    // 1. 배경을 가장 먼저 로드 (가장 아래 레이어)
+    final parallax = await loadParallaxComponent(
+      [
+        ParallaxImageData('bg_mossy_wall.png'), // 생성한 이끼 벽돌 이미지 파일명
+      ],
+      baseVelocity: Vector2(20, 0), // 옆으로 흐르는 속도 (원하는 방향에 따라 X, Y 조절)
+      repeat: ImageRepeat.repeat,    // 화면을 꽉 채우며 무한 반복
+    );
+    add(parallax);
+
     bird = Bird();
     add(bird);
 
@@ -88,12 +99,14 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
     add(Pipe(
       position: Vector2(size.x, randomY + gap),
       size: Vector2(pipeWidth, bottomPipeHeight),
+      isTop: false,
     ));
 
     // 위 파이프
     add(Pipe(
       position: Vector2(size.x, 0),
       size: Vector2(pipeWidth, topPipeHeight),
+      isTop: true,
     ));
   }
 
