@@ -3,5 +3,5 @@ import 'package:flutter/material.dart';
 import 'my_game.dart';
 
 void main() {
-  runApp(GameWidget(game: MyGame()));ㄹㄴㅁㅇㄹㄴㅇㄹ대충
+  runApp(GameWidget(game: MyGame()));
 }

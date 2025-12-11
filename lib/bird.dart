@@ -19,7 +19,7 @@ class Bird extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
     position = Vector2(size.x / size.x + 30, size.y / 2); // x: 30, y: 가운데
     add(CircleHitbox()); // 충돌 범위
   }
-fafsfsaf
+
   @override
   void update(double dt) {
     super.update(dt);
