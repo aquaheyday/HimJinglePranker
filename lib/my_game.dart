@@ -2,6 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/services.dart';
 import 'package:him_jingle_pranker/bird.dart';
 import 'package:him_jingle_pranker/pipe.dart';
 import 'dart:math';
@@ -10,7 +11,7 @@ import 'package:flame/parallax.dart';
 
 enum GameState { playing, gameOver }
 
-class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
+class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDetection {
   late Bird bird;
   int score = 0;
   double pipeSpawnTimer = 0;
@@ -26,7 +27,7 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
         ParallaxImageData('bg_mossy_wall.png'), // 생성한 이끼 벽돌 이미지 파일명
       ],
       baseVelocity: Vector2(20, 0), // 옆으로 흐르는 속도 (원하는 방향에 따라 X, Y 조절)
-      repeat: ImageRepeat.repeat,    // 화면을 꽉 채우며 무한 반복
+      repeat: ImageRepeat.repeat, // 화면을 꽉 채우며 무한 반복
     );
     add(parallax);
 
@@ -45,25 +46,38 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
           color: Color(0xFFFFFFFF),
         ),
       ),
-    )
-      ..priority = 200; // 가장 위로
+    )..priority = 200; // 가장 위로
 
     add(scoreText);
 
-    gameOverText = TextComponent(
-      text: 'GAME OVER\nTap to Restart',
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          fontSize: 40,
-          color: Color(0x00FFFFFF),
-        ),
-      ),
-    )
-      ..position = size / 2
-      ..priority = 100;
+    gameOverText =
+        TextComponent(
+            text: 'GAME OVER\nTap to Restart',
+            anchor: Anchor.center,
+            textRenderer: TextPaint(
+              style: const TextStyle(
+                fontSize: 40,
+                color: Color(0x00FFFFFF),
+              ),
+            ),
+          )
+          ..position = size / 2
+          ..priority = 100;
 
     add(gameOverText);
+  }
+
+  /// Space Jump Key Event
+  @override
+  KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    // TODO: implement onKeyEvent
+
+    if (event is KeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.space) {
+        bird.jump();
+      }
+    }
+    return super.onKeyEvent(event, keysPressed);
   }
 
   @override
@@ -82,32 +96,41 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
     }
   }
 
+  /// 장애물  크기
   void spawnPipe() {
     final height = size.y;
     final gap = 150.0;
     final pipeWidth = 60.0;
-    final minPipeHeight = 50.0;
+    // final minPipeHeight = 50.0;
+    final minPipeHeight = 20.0;
+    final maxPipeHeight = 50;
     final rand = Random(); // ← random 생성
 
-    final randomY =
-        minPipeHeight + rand.nextDouble() * (height - gap - minPipeHeight * 2);
+    // if(rand.nextDouble())
+    final randomY = minPipeHeight + rand.nextDouble() * (height - gap - minPipeHeight * 2);
+    print(rand.nextDouble());
+    print(randomY);
 
     final bottomPipeHeight = height - randomY - gap;
     final topPipeHeight = randomY;
 
     // 아래 파이프
-    add(Pipe(
-      position: Vector2(size.x, randomY + gap),
-      size: Vector2(pipeWidth, bottomPipeHeight),
-      isTop: false,
-    ));
+    add(
+      Pipe(
+        position: Vector2(size.x, randomY + gap),
+        size: Vector2(pipeWidth, bottomPipeHeight),
+        isTop: false,
+      ),
+    );
 
     // 위 파이프
-    add(Pipe(
-      position: Vector2(size.x, 0),
-      size: Vector2(pipeWidth, topPipeHeight),
-      isTop: true,
-    ));
+    add(
+      Pipe(
+        position: Vector2(size.x, 0),
+        size: Vector2(pipeWidth, topPipeHeight),
+        isTop: true,
+      ),
+    );
   }
 
   @override
@@ -151,10 +174,12 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
     children.whereType<Pipe>().forEach((pipe) => pipe.removeFromParent());
 
     // Bird 위치 초기화
-    bird.position = size / 2;
+
+    // bird.position = size.xy / 2; // 가운데
+    bird.position = Vector2(size.x / size.x + 30, size.y / 2); // x: 30, y: 가운데
+
     bird.speedY = 0;
 
     resumeEngine();
   }
-
 }

@@ -31,12 +31,7 @@ class Pipe extends PositionComponent with CollisionCallbacks {
 
     // 2. 이미지를 가로 너비에 맞춘 상태로 반복하기 위한 변환 행렬(Matrix) 생성
     // 가로와 세로를 scale만큼 키워야 패턴의 크기가 파이프 너비와 일치하게 됩니다.
-    final matrix32 = Float64List.fromList([
-      scale, 0, 0, 0,
-      0, scale, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1,
-    ]);
+    final matrix32 = Float64List.fromList([scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
     // 3. Paint 객체에 반복 모드 설정
     final paint = Paint()
