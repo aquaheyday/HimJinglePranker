@@ -8,16 +8,19 @@ import 'package:him_jingle_pranker/pipe.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flame/parallax.dart';
+import 'package:him_jingle_pranker/ground.dart';
 
 enum GameState { playing, gameOver }
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDetection {
+  static const double groundHeight = 100.0;
   late Bird bird;
   int score = 0;
   double pipeSpawnTimer = 0;
   GameState gameState = GameState.playing;
   late TextComponent gameOverText;
   late TextComponent scoreText;
+  late ScrollingGround ground;
 
   @override
   Future<void> onLoad() async {
@@ -30,6 +33,10 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
       repeat: ImageRepeat.repeat, // 화면을 꽉 채우며 무한 반복
     );
     add(parallax);
+
+    // 2. 스크롤 바닥 추가
+    ground = ScrollingGround(scrollSpeed: 200); // 파이프와 같은 속도
+    add(ground);
 
     bird = Bird();
     add(bird);
@@ -175,10 +182,10 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
 
     // Bird 위치 초기화
 
-    // bird.position = size.xy / 2; // 가운데
-    bird.position = Vector2(size.x / size.x + 30, size.y / 2); // x: 30, y: 가운데
-
+    final groundY = size.y - MyGame.groundHeight;
+    bird.position = Vector2(size.x / 5, groundY - bird.height);
     bird.speedY = 0;
+    bird.isOnGround = true;
 
     resumeEngine();
   }

@@ -14,30 +14,39 @@ class Bird extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('santa.png');
-    // 처음
 
-    position = Vector2(size.x / size.x + 30, size.y / 2); // x: 30, y: 가운데
-    add(CircleHitbox()); // 충돌 범위
+    final groundY = gameRef.size.y - MyGame.groundHeight;
+    position = Vector2(
+      gameRef.size.x / 5,
+      groundY - height,
+    );
+
+    // 🔬 확인
+    print("Bird 중심 Y: ${position.y}");
+    print("Bird 아래쪽 Y: ${position.y + height / 2}");
+    print("바닥 Y: $groundY");
+    print("차이: ${groundY - (position.y + height / 2)}");
+
+    isOnGround = true;
+    add(CircleHitbox());
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    speedY += gravity * dt; // 이동 속도
-    position.y += speedY * dt; // 점프
 
-    if (position.y >= (gameRef.size.y - 75) / 2) {
-      // 바닥 높이
-      position.y = (gameRef.size.y - 75) / 2;
+    speedY += gravity * dt;
+    position.y += speedY * dt;
+
+    final groundY = gameRef.size.y - MyGame.groundHeight;
+
+    // ✅ 바닥 충돌
+    if (position.y + height >= groundY) {
+      position.y = groundY - height;
+      speedY = 0;
       isOnGround = true;
     } else {
       isOnGround = false;
-    }
-
-    if (position.y > gameRef.size.y - height) {
-      position.y = gameRef.size.y - height;
-      speedY = 0;
-      gameRef.over();
     }
   }
 
