@@ -67,16 +67,21 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
     add(gameOverText);
   }
 
-  /// Space Jump Key Event
+  /// Key Event
   @override
   KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     // TODO: implement onKeyEvent
 
     if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.space) {
-        bird.jump();
+        if (gameState == GameState.gameOver) {
+          restart();
+        } else {
+          bird.jump();
+        }
       }
     }
+
     return super.onKeyEvent(event, keysPressed);
   }
 
@@ -133,6 +138,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
     );
   }
 
+  /// ReStart
   @override
   void onTapDown(TapDownEvent event) {
     if (gameState == GameState.gameOver) {
