@@ -3,7 +3,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:him_jingle_pranker/bird.dart';
+import 'package:him_jingle_pranker/santa.dart';
 import 'package:him_jingle_pranker/pipe.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ enum GameState { playing, gameOver }
 
 class MyGame extends FlameGame with HasGameRef<MyGame>, TapCallbacks, KeyboardEvents, HasCollisionDetection {
   static const double groundHeight = 100.0;
-  late Bird bird;
+  late Santa santa;
   int score = 0;
   double pipeSpawnTimer = 0;
   GameState gameState = GameState.playing;
@@ -41,8 +41,8 @@ class MyGame extends FlameGame with HasGameRef<MyGame>, TapCallbacks, KeyboardEv
     ground = ScrollingGround(scrollSpeed: 200); // 파이프와 같은 속도
     add(ground);
 
-    bird = Bird();
-    add(bird);
+    santa = Santa();
+    add(santa);
 
     // Score UI
     scoreText = TextComponent(
@@ -86,7 +86,7 @@ class MyGame extends FlameGame with HasGameRef<MyGame>, TapCallbacks, KeyboardEv
         if (gameState == GameState.gameOver) {
           restart();
         } else {
-          bird.jump();
+          santa.jump();
         }
       }
       return KeyEventResult.handled;
@@ -169,9 +169,8 @@ class MyGame extends FlameGame with HasGameRef<MyGame>, TapCallbacks, KeyboardEv
     if (gameState == GameState.gameOver) {
       restart();
     } else {
-      bird.jump();
+      santa.jump();
     }
-    print("TAP EVENT"); // 디버그 출력!
   }
 
   @override
@@ -195,7 +194,6 @@ class MyGame extends FlameGame with HasGameRef<MyGame>, TapCallbacks, KeyboardEv
       ),
     );
     pauseEngine();
-    print("GAME OVER Score: $score");
   }
 
   void restart() {
@@ -211,15 +209,17 @@ class MyGame extends FlameGame with HasGameRef<MyGame>, TapCallbacks, KeyboardEv
       ),
     );
 
-    // 기존 장애물 모두 제거
-    children.whereType<Pipe>().forEach((pipe) => pipe.removeFromParent());
-
-    // Bird 위치 초기화
+    children.whereType<Obstacle>().forEach((obstacle) => obstacle.removeFromParent());
 
     final groundY = size.y - MyGame.groundHeight;
-    bird.position = Vector2(size.x / 5, groundY - bird.height);
-    bird.speedY = 0;
-    bird.isOnGround = true;
+    santa.position = Vector2(
+      size.x / 5,              // X: 화면 왼쪽 1/5
+      groundY - santa.height / 2, // Y: 바닥에 딱 붙음
+    );
+    santa.speedY = 0;
+    santa.isOnGround = true;
+
+    ground.position.x = 0;
 
     resumeEngine();
   }

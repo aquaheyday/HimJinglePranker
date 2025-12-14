@@ -15,7 +15,6 @@ class ScrollingGround extends SpriteComponent with HasGameRef<MyGame> {
     final groundHeight = 100.0;
     size = Vector2(gameRef.size.x * 2, groundHeight); // 2배 너비!
     position = Vector2(0, gameRef.size.y - groundHeight);
-
     priority = 10;
   }
 

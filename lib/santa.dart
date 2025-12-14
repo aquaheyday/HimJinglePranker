@@ -1,15 +1,15 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
-import 'package:flame/events.dart';
 import 'package:him_jingle_pranker/my_game.dart';
 
-class Bird extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
+class Santa extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
+  static final Vector2 birdSize = Vector2(100.0, 100.0); // 산타 캐릭터 사이즈
+  final double gravity = 600; // 중력
+  final double jumpForce = -600; // 점프 높이
   double speedY = 0;
-  final double gravity = 600; //중력
-  final double jumpForce = -300; // 점프 높이
   bool isOnGround = true;
 
-  Bird() : super(size: Vector2(50, 50));
+  Santa() : super(size: birdSize);
 
   @override
   Future<void> onLoad() async {
@@ -20,12 +20,6 @@ class Bird extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
       gameRef.size.x / 5,
       groundY - height,
     );
-
-    // 확인
-    print("Bird 중심 Y: ${position.y}");
-    print("Bird 아래쪽 Y: ${position.y + height / 2}");
-    print("바닥 Y: $groundY");
-    print("차이: ${groundY - (position.y + height / 2)}");
 
     isOnGround = true;
     add(CircleHitbox());
