@@ -1,5 +1,5 @@
 class ImageAssets {
-  static const map = 'nightbackground.png';
+  static const map = 'nightbackground2.png';
   static const snowball = 'snowball.png';
   static const santa = 'santa.png';
 }

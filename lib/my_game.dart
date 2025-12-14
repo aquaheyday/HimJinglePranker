@@ -28,7 +28,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
     // 1. 배경을 가장 먼저 로드 (가장 아래 레이어)
     final parallax = await loadParallaxComponent(
       [
-        ParallaxImageData('bg_mossy_wall.png'), // 생성한 이끼 벽돌 이미지 파일명
+        ParallaxImageData('nightbackground2.png'), // 생성한 이끼 벽돌 이미지 파일명
       ],
       baseVelocity: Vector2(20, 0), // 옆으로 흐르는 속도 (원하는 방향에 따라 X, Y 조절)
       repeat: ImageRepeat.repeat, // 화면을 꽉 채우며 무한 반복
@@ -81,13 +81,23 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
 
     if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.space) {
+        isHolding = true;
         if (gameState == GameState.gameOver) {
           restart();
         } else {
           bird.jump();
         }
       }
+      return KeyEventResult.handled;
     }
+
+    if (event is KeyUpEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.space) {
+        isHolding = false;
+      }
+      return KeyEventResult.handled;
+    }
+
 
     return super.onKeyEvent(event, keysPressed);
   }
