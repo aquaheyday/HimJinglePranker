@@ -10,9 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flame/parallax.dart';
 import 'package:him_jingle_pranker/ground.dart';
 
+import 'obstacle.dart';
+
 enum GameState { playing, gameOver }
 
-class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDetection {
+class MyGame extends FlameGame with HasGameRef<MyGame>, TapCallbacks, KeyboardEvents, HasCollisionDetection {
   static const double groundHeight = 100.0;
   late Bird bird;
   int score = 0;
@@ -70,7 +72,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
             ),
           )
           ..position = size / 2
-          ..priority = 100;
+          ..priority = 100; // z 우선순위
 
     add(gameOverText);
   }
@@ -78,7 +80,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
   /// Key Event
   @override
   KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-
     if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.space) {
         isHolding = true;
@@ -97,7 +98,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
       }
       return KeyEventResult.handled;
     }
-
 
     return super.onKeyEvent(event, keysPressed);
   }
@@ -128,30 +128,36 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
     final maxPipeHeight = 50;
     final rand = Random(); // ← random 생성
 
-    // if(rand.nextDouble())
     final randomY = minPipeHeight + rand.nextDouble() * (height - gap - minPipeHeight * 2);
-    print(rand.nextDouble());
-    print(randomY);
 
-    final bottomPipeHeight = height - randomY - gap;
+    // final bottomPipeHeight = height - randomY - gap;
+    final chimneyHeight = 50.0; // 굴뚝 높이 사이즈
     final topPipeHeight = randomY;
+    final chimney = 'pipe.png'; // 굴뚝
+    final roofEdge = 'pipe2.png'; // 지붕 끝
 
-    // 아래 파이프
+    // 굴뚝
+    print(size.x);
     add(
-      Pipe(
-        position: Vector2(size.x, randomY + gap),
-        size: Vector2(pipeWidth, bottomPipeHeight),
-        isTop: false,
-      ),
+      //position = Vector2(0, gameRef.size.y - groundHeight);
+      Obstacle(
+        position: Vector2(size.x, gameRef.size.y - 100), // 가로 세로
+        size: Vector2(pipeWidth, chimneyHeight),
+        img: chimney,
+        obstacleSpawnProbability: 4,
+        // isTop: false,
+      )..priority = 300, // 가장 위로,
     );
 
-    // 위 파이프
+    // 지붕 낭떠러지
     add(
-      Pipe(
-        position: Vector2(size.x, 0),
+      Obstacle(
+        position: Vector2(size.x, gameRef.size.y - 150),
         size: Vector2(pipeWidth, topPipeHeight),
-        isTop: true,
-      ),
+        img: roofEdge,
+        obstacleSpawnProbability: 6,
+        // isTop: true,
+      )..priority = 300,
     );
   }
 

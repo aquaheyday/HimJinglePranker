@@ -21,7 +21,7 @@ class Bird extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
       groundY - height,
     );
 
-    // 🔬 확인
+    // 확인
     print("Bird 중심 Y: ${position.y}");
     print("Bird 아래쪽 Y: ${position.y + height / 2}");
     print("바닥 Y: $groundY");
