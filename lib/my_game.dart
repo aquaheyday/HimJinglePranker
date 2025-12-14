@@ -21,6 +21,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
   late TextComponent gameOverText;
   late TextComponent scoreText;
   late ScrollingGround ground;
+  bool isHolding = false;
 
   @override
   Future<void> onLoad() async {
@@ -77,7 +78,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
   /// Key Event
   @override
   KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    // TODO: implement onKeyEvent
 
     if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.space) {
@@ -148,12 +148,24 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents, HasCollisionDe
   /// ReStart
   @override
   void onTapDown(TapDownEvent event) {
+    isHolding = true;
+
     if (gameState == GameState.gameOver) {
       restart();
     } else {
       bird.jump();
     }
     print("TAP EVENT"); // 디버그 출력!
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    isHolding = false;
+  }
+
+  @override
+  void onTapCancel(TapCancelEvent event) {
+    isHolding = false;
   }
 
   void over() {

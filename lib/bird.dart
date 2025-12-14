@@ -45,6 +45,10 @@ class Bird extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
       position.y = groundY - height;
       speedY = 0;
       isOnGround = true;
+
+      if (gameRef.isHolding) {
+        jump();
+      }
     } else {
       isOnGround = false;
     }
