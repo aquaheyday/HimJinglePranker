@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flame/components.dart';
 import '../components/obstacles/obstacle.dart';
+import '../config/assets.dart';
 import '../config/game_config.dart';
 
 enum ObstacleType { chimney, roofEdge }

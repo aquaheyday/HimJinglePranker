@@ -9,6 +9,7 @@ import 'package:flame/parallax.dart';
 import '../components/player/santa.dart';
 import '../components/environment/ground.dart';
 import '../components/obstacles/obstacle.dart';
+import '../config/assets.dart';
 import '../config/game_config.dart';
 import '../managers/spawn_manager.dart';
 import '../managers/score_manager.dart';

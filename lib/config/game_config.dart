@@ -24,11 +24,3 @@ class GameConfig {
   static const double scoreFontSize = 32.0;
   static const double gameOverFontSize = 40.0;
 }
-
-class Assets {
-  static const String santa = 'santa.png';
-  static const String chimney = 'pipe.png';
-  static const String roofEdge = 'pipe2.png';
-  static const String ground = 'ground.png';
-  static const String background = 'nightbackground2.png';
-}
