@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:him_jingle_pranker/my_game.dart';
+import 'package:him_jingle_pranker/game/my_game.dart';
 
 class ScrollingGround extends SpriteComponent with HasGameRef<MyGame> {
   final double scrollSpeed;

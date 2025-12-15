@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
-import 'package:him_jingle_pranker/my_game.dart';
+import 'package:him_jingle_pranker/game/my_game.dart';
 
 class Santa extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
   static final Vector2 birdSize = Vector2(100.0, 100.0); // 산타 캐릭터 사이즈
