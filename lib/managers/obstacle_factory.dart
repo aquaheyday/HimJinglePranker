@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flame/components.dart';
 import '../components/obstacles/obstacle.dart';
-import '../config/assets.dart';
+import '../config/assets_path.dart';
 import '../config/game_config.dart';
 
 enum ObstacleType { chimney, roofEdge }
@@ -23,7 +23,7 @@ class ObstacleFactory {
         GameConfig.obstacleWidth,
         GameConfig.chimneyHeight,
       ),
-      img: Assets.chimney,
+      img: AssetsPath.chimney,
       obstacleSpawnProbability: 4,
     )..priority = 300;
   }
@@ -43,7 +43,7 @@ class ObstacleFactory {
         GameConfig.obstacleWidth,
         randomHeight,
       ),
-      img: Assets.roofEdge,
+      img: AssetsPath.roofEdge,
       obstacleSpawnProbability: 6,
     )..priority = 300;
   }

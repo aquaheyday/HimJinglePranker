@@ -1,4 +1,4 @@
-class Assets {
+class AssetsPath {
   // 이미지
   static const String santa = 'santa.png';
   static const String chimney = 'pipe.png';
