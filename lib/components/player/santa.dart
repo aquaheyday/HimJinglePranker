@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:him_jingle_pranker/game/my_game.dart';
 
 class Santa extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
@@ -49,7 +50,12 @@ class Santa extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks 
   }
 
   void jump() {
-    if (isOnGround) speedY = jumpForce;
+    if (!isOnGround) return;
+
+    speedY = jumpForce;
+    isOnGround = false;
+
+    FlameAudio.play('jump.wav', volume: 0.5);
   }
 
   @override

@@ -11,6 +11,7 @@ import '../components/environment/ground.dart';
 import '../components/obstacles/obstacle.dart';
 import '../config/assets_path.dart';
 import '../config/game_config.dart';
+import '../managers/audio_manager.dart';
 import '../managers/spawn_manager.dart';
 import '../managers/score_manager.dart';
 import 'game_state.dart';
@@ -38,6 +39,7 @@ class MyGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
+    await AudioManager.init();
     // Managers 초기화
     scoreManager = ScoreManager();
     spawnManager = SpawnManager(this);
