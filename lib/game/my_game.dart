@@ -19,6 +19,8 @@ import 'game_state.dart';
 class MyGame extends FlameGame
     with HasGameRef<MyGame>, TapCallbacks, KeyboardEvents, HasCollisionDetection {
 
+  late ParallaxComponent parallax;
+
   // Components
   late Santa santa;
   late ScrollingGround ground;
@@ -48,24 +50,21 @@ class MyGame extends FlameGame
 
     // 배경
     await _loadBackground();
-
     // 바닥
     _loadGround();
-
     // 플레이어
     _loadSanta();
-
     // UI
     _loadUI();
 
     // 배경 음악 재생
-    audioManager.playBackgroundMusic();
+    //audioManager.playBackgroundMusic();
   }
 
   Future<void> _loadBackground() async {
-    final parallax = await loadParallaxComponent(
+    parallax = await loadParallaxComponent(
       [ParallaxImageData(AssetsPath.background)],
-      baseVelocity: Vector2(GameConfig.backgroundScrollSpeed, 0),
+      baseVelocity: Vector2.zero(),  // 처음엔 멈춤
       repeat: ImageRepeat.repeat,
     );
     add(parallax);
@@ -178,8 +177,12 @@ class MyGame extends FlameGame
   void _startGame() {
     gameState = GameState.playing;
 
-    audioManager.playBackgroundMusic(); // BGM 시작
+    // 배경 스크롤 시작
+    parallax.parallax?.baseVelocity = Vector2(GameConfig.backgroundScrollSpeed, 0);
+    // 바닥 스크롤 시작
+    ground.isScrolling = true;
 
+    audioManager.playBackgroundMusic(); // BGM 시작
     startText.removeFromParent();       // 시작 문구 제거
   }
 
@@ -187,7 +190,7 @@ class MyGame extends FlameGame
   void update(double dt) {
     super.update(dt);
 
-    if (gameState == GameState.gameOver) return;
+    if (gameState != GameState.playing) return;
 
     // 스페이스바 홀딩 시 자동 점프
     if (isHolding && santa.isOnGround) {
@@ -210,6 +213,9 @@ class MyGame extends FlameGame
 
     gameState = GameState.gameOver;
 
+    parallax.parallax?.baseVelocity = Vector2.zero();
+    ground.isScrolling = false;
+
     audioManager.pauseBackgroundMusic();
     audioManager.playGameOver();
 
@@ -227,6 +233,9 @@ class MyGame extends FlameGame
   /// 재시작
   void restart() {
     gameState = GameState.playing;
+
+    parallax.parallax?.baseVelocity = Vector2(GameConfig.backgroundScrollSpeed, 0);
+    ground.isScrolling = true;
 
     audioManager.playBackgroundMusic();
 

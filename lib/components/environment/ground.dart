@@ -3,6 +3,7 @@ import 'package:him_jingle_pranker/game/my_game.dart';
 
 class ScrollingGround extends SpriteComponent with HasGameRef<MyGame> {
   final double scrollSpeed;
+  bool isScrolling = false;
 
   ScrollingGround({
     required this.scrollSpeed,
@@ -21,6 +22,8 @@ class ScrollingGround extends SpriteComponent with HasGameRef<MyGame> {
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (!isScrolling) return;
 
     // 왼쪽으로 스크롤
     position.x -= scrollSpeed * dt;
