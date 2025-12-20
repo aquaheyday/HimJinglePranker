@@ -5,6 +5,8 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/parallax.dart';
+import 'package:him_jingle_pranker/components/obstacles/chimney.dart';
+import 'package:him_jingle_pranker/components/obstacles/roofEdge.dart';
 
 import '../components/player/santa.dart';
 import '../components/environment/ground.dart';
@@ -16,9 +18,7 @@ import '../managers/spawn_manager.dart';
 import '../managers/score_manager.dart';
 import 'game_state.dart';
 
-class MyGame extends FlameGame
-    with HasGameRef<MyGame>, TapCallbacks, KeyboardEvents, HasCollisionDetection {
-
+class MyGame extends FlameGame with HasGameRef<MyGame>, TapCallbacks, KeyboardEvents, HasCollisionDetection {
   late ParallaxComponent parallax;
 
   // Components
@@ -64,7 +64,7 @@ class MyGame extends FlameGame
   Future<void> _loadBackground() async {
     parallax = await loadParallaxComponent(
       [ParallaxImageData(AssetsPath.background)],
-      baseVelocity: Vector2.zero(),  // 처음엔 멈춤
+      baseVelocity: Vector2.zero(), // 처음엔 멈춤
       repeat: ImageRepeat.repeat,
     );
     add(parallax);
@@ -130,9 +130,9 @@ class MyGame extends FlameGame
 
   @override
   KeyEventResult onKeyEvent(
-      KeyEvent event,
-      Set<LogicalKeyboardKey> keysPressed,
-      ) {
+    KeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
     if (event.logicalKey == LogicalKeyboardKey.space) {
       if (event is KeyDownEvent) {
         isHolding = true;
@@ -183,7 +183,7 @@ class MyGame extends FlameGame
     ground.isScrolling = true;
 
     audioManager.playBackgroundMusic(); // BGM 시작
-    startText.removeFromParent();       // 시작 문구 제거
+    startText.removeFromParent(); // 시작 문구 제거
   }
 
   @override
@@ -266,8 +266,15 @@ class MyGame extends FlameGame
   }
 
   void _removeAllObstacles() {
-    children.whereType<Obstacle>().toList().forEach((obstacle) {
-      obstacle.removeFromParent();
+    children.whereType<Chimney>().toList().forEach((chimney) {
+      chimney.removeFromParent();
+      // });children.whereType<Obstacle>().toList().forEach((obstacle) {
+      //   obstacle.removeFromParent();
+    });
+    children.whereType<RoofEdge>().toList().forEach((roofEdge) {
+      roofEdge.removeFromParent();
+      // });children.whereType<Obstacle>().toList().forEach((obstacle) {
+      //   obstacle.removeFromParent();
     });
   }
 

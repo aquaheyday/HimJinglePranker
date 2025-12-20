@@ -8,7 +8,7 @@ import 'package:him_jingle_pranker/config/game_config.dart';
 
 /// 장애물
 /// 6:4 (낭떠러지:굴뚝)
-class Obstacle extends PositionComponent with CollisionCallbacks {
+class RoofEdge extends PositionComponent with CollisionCallbacks {
   late Sprite sprite;
   late String img;
   final double obstacleSpawnProbability; // 장애물 발생 확률
@@ -20,7 +20,7 @@ class Obstacle extends PositionComponent with CollisionCallbacks {
 
   // late Rect rect;
 
-  Obstacle({
+  RoofEdge({
     required Vector2 position,
     required Vector2 size,
     required this.img,

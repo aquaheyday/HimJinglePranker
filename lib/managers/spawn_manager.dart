@@ -1,5 +1,8 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flame/components.dart';
+import 'package:him_jingle_pranker/components/obstacles/roofEdge.dart';
+import '../components/obstacles/chimney.dart';
 import '../game/my_game.dart';
 import '../components/obstacles/obstacle.dart';
 import '../config/game_config.dart';
@@ -11,9 +14,9 @@ class SpawnManager {
   final Random _random = Random();
 
   SpawnManager(
-      this.game, {
-        this.spawnInterval = GameConfig.spawnInterval,
-      });
+    this.game, {
+    this.spawnInterval = GameConfig.spawnInterval,
+  });
 
   void update(double dt) {
     spawnTimer += dt;
@@ -34,9 +37,7 @@ class SpawnManager {
     final pipeWidth = 60.0;
     final minPipeHeight = 20.0;
 
-    final randomY = minPipeHeight +
-        _random.nextDouble() *
-            (height - gap - minPipeHeight * 2);
+    final randomY = minPipeHeight + _random.nextDouble() * (height - gap - minPipeHeight * 2);
 
     final chimneyHeight = 50.0;
     final topPipeHeight = randomY;
@@ -45,21 +46,32 @@ class SpawnManager {
 
     // 굴뚝
     game.add(
-      Obstacle(
+      Chimney(
         position: Vector2(game.size.x, game.size.y - 100),
         size: Vector2(pipeWidth, chimneyHeight),
-        img: chimney,
-        obstacleSpawnProbability: 4,
+        // img: chimney,
+        // obstacleSpawnProbability: 4,
+        // // rect: Rect.fromLTWH(0, 0, 0, 0),
+        // // 0, height - GameConfig.santaGravity, width, height
+        // rectLeft: 0,
+        // rectTop: GameConfig.santaGravity,
+        // rectWidth: null,
+        // rectHeight: null,
       )..priority = 300,
     );
 
     // 지붕 낭떠러지
     game.add(
-      Obstacle(
+      RoofEdge(
         position: Vector2(game.size.x, game.size.y - 150),
         size: Vector2(pipeWidth, topPipeHeight),
         img: roofEdge,
         obstacleSpawnProbability: 6,
+        rectLeft: 0,
+        rectTop: GameConfig.santaGravity,
+        rectWidth: null,
+        rectHeight: null,
+        // rect: Rect.fromLTWH(0, 0, 0, 0),
       )..priority = 300,
     );
   }

@@ -8,33 +8,50 @@ import 'package:him_jingle_pranker/config/game_config.dart';
 
 /// 장애물
 /// 6:4 (낭떠러지:굴뚝)
-class Obstacle extends PositionComponent with CollisionCallbacks {
-  late Sprite sprite;
-  late String img;
-  final double obstacleSpawnProbability; // 장애물 발생 확률
-  // late List<double> rect; // drawRect
-  late double? rectLeft;
-  late double? rectTop;
-  late double? rectWidth;
-  late double? rectHeight;
+class Chimney extends PositionComponent with CollisionCallbacks {
+  // late Sprite sprite;
+  // late String img;
+  // final double obstacleSpawnProbability; // 장애물 발생 확률
+  // // late List<double> rect; // drawRect
+  // late double? rectLeft;
+  // late double? rectTop;
+  // late double? rectWidth;
+  // late double? rectHeight;
 
   // late Rect rect;
+  final chimney = 'pipe.png';
+  late Sprite sprite;
 
-  Obstacle({
+  // position: Vector2(game.size.x, game.size.y - 100),
+  // size: Vector2(pipeWidth, chimneyHeight),
+  // img: chimney,
+  // obstacleSpawnProbability: 4,
+  // // rect: Rect.fromLTWH(0, 0, 0, 0),
+  // // 0, height - GameConfig.santaGravity, width, height
+  // rectLeft: 0,
+  // rectTop: GameConfig.santaGravity,
+  // rectWidth: null,
+  // rectHeight: null,
+  Chimney({
     required Vector2 position,
     required Vector2 size,
-    required this.img,
-    required this.obstacleSpawnProbability,
-    required this.rectLeft,
-    required this.rectTop,
-    required this.rectWidth,
-    required this.rectHeight,
-    // required this.rect,
   }) : super(position: position, size: size);
+
+  // Chimney({
+  //   // required Vector2 position,
+  //   // required Vector2 size,
+  //   // required this.img,
+  //   // required this.obstacleSpawnProbability,
+  //   // required this.rectLeft,
+  //   // required this.rectTop,
+  //   // required this.rectWidth,
+  //   // required this.rectHeight,
+  //   // required this.rect,
+  // }) : super(position: position, size: size);
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load(img);
+    sprite = await Sprite.load(chimney);
     add(RectangleHitbox());
   }
 
@@ -63,8 +80,8 @@ class Obstacle extends PositionComponent with CollisionCallbacks {
     // 4. 원하는 크기만큼 사각형을 그리면 내부가 이미지로 채워집니다.
     // 가로는 고정된 width, 세로는 컴포넌트의 height만큼 그립니다.
     // canvas.drawRect(Rect.fromLTWH(0, 0, width, height), paint);
-    // canvas.drawRect(Rect.fromLTWH(0, height - GameConfig.santaGravity, width, height), paint);
-    canvas.drawRect(Rect.fromLTWH(rectLeft ?? 0, rectTop ?? 0, rectWidth ?? width, rectHeight ?? height), paint);
+    canvas.drawRect(Rect.fromLTWH(0, 0, width, height), paint);
+    // canvas.drawRect(Rect.fromLTWH(rectLeft ?? 0, rectTop ?? 0, rectWidth ?? width, rectHeight ?? height), paint);
     // canvas.drawRect(rect, paint);
   }
 
