@@ -22,15 +22,17 @@ class MyGame extends FlameGame
   // Components
   late Santa santa;
   late ScrollingGround ground;
+  late TextComponent startText;
   late TextComponent scoreText;
   late TextComponent gameOverText;
 
   // Managers
   late SpawnManager spawnManager;
   late ScoreManager scoreManager;
+  final AudioManager audioManager = AudioManager();
 
   // State
-  GameState gameState = GameState.playing;
+  GameState gameState = GameState.ready;
   bool isHolding = false;
 
   // Getters for external access
@@ -39,7 +41,7 @@ class MyGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
-    await AudioManager.init();
+    await audioManager.init();
     // Managers 초기화
     scoreManager = ScoreManager();
     spawnManager = SpawnManager(this);
@@ -55,6 +57,9 @@ class MyGame extends FlameGame
 
     // UI
     _loadUI();
+
+    // 배경 음악 재생
+    audioManager.playBackgroundMusic();
   }
 
   Future<void> _loadBackground() async {
@@ -107,6 +112,21 @@ class MyGame extends FlameGame
       ),
     )..priority = 100;
     add(gameOverText);
+
+    // 시작 텍스트
+    startText = TextComponent(
+      text: 'TAP TO START',
+      anchor: Anchor.center,
+      position: size / 2,
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          fontSize: 36,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    )..priority = 150;
+    add(startText);
   }
 
   @override
@@ -143,11 +163,24 @@ class MyGame extends FlameGame
   }
 
   void _handleJumpOrRestart() {
+    if (gameState == GameState.ready) {
+      _startGame();
+      return;
+    }
+
     if (gameState == GameState.gameOver) {
       restart();
     } else {
       santa.jump();
     }
+  }
+
+  void _startGame() {
+    gameState = GameState.playing;
+
+    audioManager.playBackgroundMusic(); // BGM 시작
+
+    startText.removeFromParent();       // 시작 문구 제거
   }
 
   @override
@@ -177,6 +210,9 @@ class MyGame extends FlameGame
 
     gameState = GameState.gameOver;
 
+    audioManager.pauseBackgroundMusic();
+    audioManager.playGameOver();
+
     gameOverText.textRenderer = TextPaint(
       style: const TextStyle(
         fontSize: GameConfig.gameOverFontSize,
@@ -191,6 +227,8 @@ class MyGame extends FlameGame
   /// 재시작
   void restart() {
     gameState = GameState.playing;
+
+    audioManager.playBackgroundMusic();
 
     // 매니저 초기화
     scoreManager.reset();
