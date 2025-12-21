@@ -31,9 +31,6 @@ class Santa extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks 
   void update(double dt) {
     super.update(dt);
 
-    /// 전진거리 , 검토필요
-    // print(speedY * (2 * jumpForce) / gravity);
-    // print('----');
     speedY += gravity * dt;
     position.y += speedY * dt;
 
