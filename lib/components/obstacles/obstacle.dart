@@ -1,62 +1,92 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
-import 'dart:ui';
 
-/// 장애물
-/// 6:4 (낭떠러지:굴뚝)
-class Obstacle extends PositionComponent with CollisionCallbacks {
+import '../../game/my_game.dart';
+
+/// 장애물 공통 클래스
+/// - 대표 장애물(isScoreTrigger = true)만 점수 증가
+class Obstacle extends PositionComponent
+    with CollisionCallbacks, HasGameRef<MyGame> {
+
   late Sprite sprite;
-  late String img;
-  final int obstacleSpawnProbability; // 장애물 발생 확률
+  final String img;
+
+  /// ⭐ 점수 트리거 여부
+  final bool isScoreTrigger;
+
+  bool _isPassed = false;
 
   Obstacle({
     required Vector2 position,
     required Vector2 size,
     required this.img,
-    required this.obstacleSpawnProbability,
+    this.isScoreTrigger = false,
   }) : super(position: position, size: size);
 
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load(img);
     add(RectangleHitbox());
+
+    // ⭐ 화면 오른쪽에서 시작
+    position.x = gameRef.size.x;
+
+    // ⭐ 이게 없으면 GroundObstacle Y 계산 안 됨
+    onPositionReady();
   }
+
+  /// 하위 클래스에서 override
+  void onPositionReady() {}
 
   @override
   void render(Canvas canvas) {
-    if (sprite == null) return;
+    final obstacleImg = sprite.image;
 
-    final obstacleImg = sprite!.image;
-
-    // 1. 가로 너비에 맞게 이미지를 스케일링할 배율 계산
+    // 가로 기준 스케일
     final double scale = width / obstacleImg.width;
 
-    // 2. 이미지를 가로 너비에 맞춘 상태로 반복하기 위한 변환 행렬(Matrix) 생성
-    // 가로와 세로를 scale만큼 키워야 패턴의 크기가 파이프 너비와 일치하게 됩니다.
-    final matrix32 = Float64List.fromList([scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    final matrix = Float64List.fromList([
+      scale, 0,     0, 0,
+      0,     scale, 0, 0,
+      0,     0,     1, 0,
+      0,     0,     0, 1,
+    ]);
 
-    // 3. Paint 객체에 반복 모드 설정
     final paint = Paint()
       ..shader = ImageShader(
         obstacleImg,
-        TileMode.repeated, // 가로 반복 (필요 시)
-        TileMode.repeated, // 세로 반복 (파이프가 길어지는 핵심)
-        matrix32,
+        TileMode.repeated,
+        TileMode.repeated,
+        matrix,
       );
 
-    // 4. 원하는 크기만큼 사각형을 그리면 내부가 이미지로 채워집니다.
-    // 가로는 고정된 width, 세로는 컴포넌트의 height만큼 그립니다.
-    canvas.drawRect(Rect.fromLTWH(0, 0, width, height), paint);
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, width, height),
+      paint,
+    );
   }
 
   @override
   void update(double dt) {
+    super.update(dt);
+
+    // 이동
     position.x -= 200 * dt;
 
-    print(position.x);
-    print('-------------');
-    if (position.x + width < 0) removeFromParent();
+    // ⭐ 대표 장애물만 점수 체크
+    if (isScoreTrigger &&
+        !_isPassed &&
+        position.x + width < gameRef.santa.position.x) {
+      _isPassed = true;
+      gameRef.increaseScore();
+    }
+
+    // 화면 밖 제거
+    if (position.x + width < 0) {
+      removeFromParent();
+    }
   }
 }
