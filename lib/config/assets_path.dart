@@ -1,6 +1,6 @@
 class AssetsPath {
   // 이미지
-  static const String santa = 'santa.png';
+  static const String santa = 'santa3.png';
   static const String chimney = 'pipe.png';
   static const String roofEdge = 'pipe2.png';
   static const String ground = 'ground.png';

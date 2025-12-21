@@ -8,6 +8,7 @@ class CeilingObstacle extends Obstacle {
 
   CeilingObstacle({
     required this.height,
+    bool isScoreTrigger = true,
   }) : super(
     position: Vector2.zero(),
     size: Vector2(
@@ -15,7 +16,7 @@ class CeilingObstacle extends Obstacle {
       height,
     ),
     img: AssetsPath.roofEdge,
-    isScoreTrigger: false,
+    isScoreTrigger: isScoreTrigger,
   );
 
   @override

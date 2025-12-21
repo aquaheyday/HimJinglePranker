@@ -3,6 +3,7 @@ import 'package:flame/collisions.dart';
 import 'package:him_jingle_pranker/game/my_game.dart';
 
 import '../../managers/audio_manager.dart';
+import '../../config/assets_path.dart';
 
 class Santa extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
   static final Vector2 birdSize = Vector2(100.0, 100.0); // 산타 캐릭터 사이즈
@@ -15,7 +16,7 @@ class Santa extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks 
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('santa.png');
+    sprite = await Sprite.load(AssetsPath.santa);
 
     final groundY = gameRef.size.y - MyGame.groundHeight;
     position = Vector2(
