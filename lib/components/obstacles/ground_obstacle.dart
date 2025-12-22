@@ -1,29 +1,26 @@
 import 'package:flame/components.dart';
-import '../../config/assets_path.dart';
-import '../../config/game_config.dart';
-import 'obstacle.dart';
 
-class GroundObstacle extends Obstacle {
-  final double height;
+import '../../core/assets.dart';
+import '../../core/game_config.dart';
+import 'base_obstacle.dart';
 
+/// 바닥에서 올라오는 장애물 (굴뚝)
+class GroundObstacle extends BaseObstacle {
   GroundObstacle({
-    required this.height,
+    required double height,
+    required double speed,
     bool isScoreTrigger = true,
   }) : super(
-    position: Vector2.zero(), // ⭐ x, y 임시값
-    size: Vector2(
-      GameConfig.obstacleWidth,
-      height,
-    ),
-    img: AssetsPath.chimney,
+    position: Vector2.zero(), // onPositionReady에서 설정
+    size: Vector2(GameConfig.obstacleWidth, height),
+    imagePath: Assets.chimney,
+    speed: speed,
     isScoreTrigger: isScoreTrigger,
   );
 
   @override
   void onPositionReady() {
-    // ⭐ 핵심: 바닥 기준으로 위치 계산
-    position.y = gameRef.size.y
-        - GameConfig.groundHeight
-        - height;
+    // 바닥 위에 위치
+    position.y = gameRef.size.y - GameConfig.groundHeight - height;
   }
 }
