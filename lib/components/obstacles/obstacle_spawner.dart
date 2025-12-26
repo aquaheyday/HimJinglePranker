@@ -68,10 +68,18 @@ class ObstacleSpawner extends Component with HasGameRef<MyGame> {
   }
 
   CeilingObstacle _createCeilingObstacle() {
-    final height = GameConfig.ceilingObstacleMinHeight +
-        _random.nextDouble() * 
-        (GameConfig.ceilingObstacleMaxHeight - GameConfig.ceilingObstacleMinHeight);
-    
+    /*final height = GameConfig.ceilingObstacleMinHeight +
+        _random.nextDouble() *
+        (GameConfig.ceilingObstacleMaxHeight - GameConfig.ceilingObstacleMinHeight);*/
+    final santaHeight = game.santa.height;
+
+    const double clearance = 10.0;
+
+    final gap = santaHeight + clearance;
+
+    final height =
+        game.size.y - GameConfig.groundHeight - gap;
+
     return CeilingObstacle(
       height: height,
       speed: _currentSpeed,
